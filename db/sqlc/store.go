@@ -100,24 +100,41 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 
 		// 3. update account balance
 		// 잠재적인 데드락 현상을 방지해야함
-		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
-		if err != nil {
-			return err
-		}
-
-		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
-		if err != nil {
-			return err
+		// 1. FK 가 걸린 row 를 참조 변환할때
+		// 2. 한 트랜잭션이 대기하고있는 다른트랜잭션이 참조하고자 할때
+		// ex) A -> B 송금, B -> A 송금 상황일때
+		// 1) TX1 : A update
+		// 2) TX2 : B update
+		// 3) TX1 : wait (TX2 B update done)
+		// 4) TX2 : deadlock detect (wait TX1 done)
+		if arg.FromAccountID < arg.ToAccountID {
+			result.FromAccount, result.ToAccount, err = addMoney(ctx, q, arg.FromAccountID, -arg.Amount, arg.ToAccountID, arg.Amount)
+		} else {
+			result.ToAccount, result.FromAccount, err = addMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
 		}
 
 		return nil
 	})
 
 	return result, err
+}
+
+func addMoney(ctx context.Context, q *Queries, accountID1, amount1, accountID2, amount2 int64) (account1, account2 Account, err error) {
+	account1, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     accountID1,
+		Amount: amount1,
+	})
+	if err != nil {
+		return
+	}
+
+	account2, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     accountID2,
+		Amount: amount2,
+	})
+	if err != nil {
+		return
+	}
+
+	return
 }
