@@ -18,3 +18,7 @@ createRandomAccount()로 분리시킨이유
 
 DeadLock
 ㄴ 여러 트랜잭션이 생성될때 FK 참조로 데드락이 발생할수도있다
+
+2/6
+1. Gin(HTTP framework) 을 통한 API 구축
+2. 기존 const로 선언된 환경변수 Viper로 파일에서 읽어들이게끔 변경
