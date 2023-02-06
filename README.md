@@ -19,6 +19,15 @@ createRandomAccount()로 분리시킨이유
 DeadLock
 ㄴ 여러 트랜잭션이 생성될때 FK 참조로 데드락이 발생할수도있다
 
+
+
 2/6
 1. Gin(HTTP framework) 을 통한 API 구축
 2. 기존 const로 선언된 환경변수 Viper로 파일에서 읽어들이게끔 변경
+3. Mock DB for testing HTTP API in Go
+mockgen 을 통한 mock db 사용.
+ㄴ 아래이슈 나올때 참고 // https://github.com/golang/mock/issues/494
+prog.go:12:2: no required module provides package github.com/golang/mock/mockgen/model: go.mod file not found in current directory or any parent directory; see 'go help modules'
+
+각 패키지에서 main_test.go 파일로 선행될 부분을 정해줄수있다.
+ㄴ 여기선 gin의 testmode 세팅을 이용하기 위해 main_test.go를 썼다.

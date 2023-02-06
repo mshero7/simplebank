@@ -21,5 +21,8 @@ sqlc_mac:
 
 test:
 	go test -v -cover ./...
+	
+mockgen:
+	mockgen -destination ./db/mock/store.go -package mockdb github.com/mshero7/simplebank/db/sqlc Store
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test mockgen

@@ -6,15 +6,20 @@ import (
 	"fmt"
 )
 
-// DB query, tx 실행용 store
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
+// SQLStore DB query, tx 실행용 store
 // Composition (Embeding)을 통해 *Queries에 있는 함수들을 store로도 접근가능하게 해준다.
-type Store struct {
+type SQLStore struct {
 	*Queries
 	db *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		db:      db,
 		Queries: New(db), // sqlc sql.DB
 	}
@@ -24,7 +29,7 @@ var txKey = struct{}{}
 
 // execTx
 // executes a function within a database transaction
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
 
 	if err != nil {
@@ -64,7 +69,7 @@ type TransferTxResult struct {
 
 // 하나의 트랜잭션으로 다른 계정으로 돈 송금할때를 구현
 // error 반환되면 rollback 되게끔
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 
 	// create executable tx
