@@ -31,3 +31,16 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 
 각 패키지에서 main_test.go 파일로 선행될 부분을 정해줄수있다.
 ㄴ 여기선 gin의 testmode 세팅을 이용하기 위해 main_test.go를 썼다.
+
+2/7
+1. Custom Validator in go 
+
+    형 변환시, 형변환 값, err 가 나온다.
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("currency", validCurrency)
+	}
+
+    Gin 의 기본 밸리데이터는 github.com/go-playground/validator/v10 이라, 새로운 밸리데이터 함수 선언한 뒤, Gin 에 등록해주면 끝
+    ex) 
+        var validCurrency validator.Func = func(fieldLevel validator.FieldLevel) bool {
+    

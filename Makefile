@@ -25,4 +25,8 @@ test:
 mockgen:
 	mockgen -destination ./db/mock/store.go -package mockdb github.com/mshero7/simplebank/db/sqlc Store
 
+server:
+	go run main.go
+
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test mockgen
+

@@ -25,6 +25,7 @@ func main() {
 	server := api.NewSever(store)
 
 	err = server.Start(config.ServerAddress)
+
 	if err != nil {
 		log.Fatal("cannot start sesrver")
 	}
