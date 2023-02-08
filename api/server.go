@@ -19,6 +19,7 @@ func NewSever(store db.Store) *Server {
 		store: store,
 	}
 	router := gin.Default()
+	router.SetTrustedProxies(nil) // You trusted all proxies
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("currency", validCurrency)
