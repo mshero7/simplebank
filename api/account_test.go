@@ -100,7 +100,7 @@ func TestGetAccountAPI(t *testing.T) {
 			// build stubs
 			// Times 는 실제 GetAccount에서 조회하는 횟수
 
-			server := NewSever(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			url := fmt.Sprintf("/accounts/%d", tc.accountID)
