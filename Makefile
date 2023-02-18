@@ -23,16 +23,15 @@ sqlc:
 	docker run --rm -v "%cd%:/src" -w /src kjconroy/sqlc generate
 	
 sqlc_mac:
-	docker run --rm -v $(pwd):/src -w /src kjconroy/sqlc generate
+	sqlc generate
 
 test:
 	go test -v -cover ./...
 	
-mockgen:
+mock:
 	mockgen -destination ./db/mock/store.go -package mockdb github.com/mshero7/simplebank/db/sqlc Store
 
 server:
 	go run main.go
 
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test mockgen migratedown1
-
