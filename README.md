@@ -60,4 +60,4 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 2. 관련 엔드포인트별 인증 적용 및 테스트 적용
 3. mock, sqlc 재정의.
 
-4. bracnch check
+4. bracnch check test
