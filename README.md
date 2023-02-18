@@ -31,6 +31,8 @@ DeadLock
 mockgen 을 통한 mock db 사용.
 ㄴ 아래이슈 나올때 참고 // https://github.com/golang/mock/issues/494
 prog.go:12:2: no required module provides package github.com/golang/mock/mockgen/model: go.mod file not found in current directory or any parent directory; see 'go help modules'
+3-1. 맥북 mockgen 을 위한 환경변수 추가
+ㄴ export PATH=$PATH:$(go env GOPATH)/bin
 
 각 패키지에서 main_test.go 파일로 선행될 부분을 정해줄수있다.
 ㄴ 여기선 gin의 testmode 세팅을 이용하기 위해 main_test.go를 썼다.
@@ -52,5 +54,3 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
     기존 account 와 동일한 내용들이 있어 그대로 사용해 생성.
     makefile 수정
         migrate down [N] > N 플래그로 이전 N 단계까지 migrate down 할 수 있다.
-    
-    

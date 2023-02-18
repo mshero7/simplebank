@@ -45,12 +45,13 @@ func (server *Server) setupRouter() {
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
-	// add routes to router
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
+	// 인증이 필요한 핸들러 그룹핑
+	authRoutest := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	authRoutest.POST("/accounts", server.createAccount)
+	authRoutest.GET("/accounts/:id", server.getAccount)
+	authRoutest.GET("/accounts", server.listAccount)
+	authRoutest.POST("/transfers", server.createTransfer)
 
-	router.POST("/transfers", server.createTransfer)
 	server.router = router
 }
 
@@ -59,6 +60,6 @@ func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
 
-func errorReponse(err error) gin.H {
+func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }

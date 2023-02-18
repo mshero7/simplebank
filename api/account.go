@@ -2,11 +2,13 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	db "github.com/mshero7/simplebank/db/sqlc"
+	"github.com/mshero7/simplebank/token"
 )
 
 type createAccountRequest struct {
@@ -19,12 +21,13 @@ func (server *Server) createAccount(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		// send JSON response
-		ctx.JSON(http.StatusBadRequest, errorReponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload) // 인증 페이로드
 	arg := db.CreateAccountParams{
-		Owner:    req.Owner,
+		Owner:    authpayload.Username,
 		Currency: req.Currency,
 		Balance:  0,
 	}
@@ -34,12 +37,12 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "foreign_key_violation", "unique_violation":
-				ctx.JSON(http.StatusForbidden, errorReponse(err))
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
 				return
 			}
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -55,21 +58,27 @@ func (server *Server) getAccount(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		// send JSON response
-		ctx.JSON(http.StatusBadRequest, errorReponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	account, err := server.store.GetAccount(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorReponse(err))
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authpayload.Username != account.Owner {
+		err := errors.New("account doesn't belong to the authentication user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	ctx.JSON(http.StatusOK, account)
 }
 
@@ -83,18 +92,20 @@ func (server *Server) listAccount(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		// send JSON response
-		ctx.JSON(http.StatusBadRequest, errorReponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	arg := db.ListAccountParams{
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload) // 인증 페이로드
+	arg := db.ListAccountsParams{
+		Owner:  authpayload.Username,
 		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	accounts, err := server.store.ListAccount(ctx, arg)
+	accounts, err := server.store.ListAccounts(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

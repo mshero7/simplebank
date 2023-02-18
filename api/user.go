@@ -41,13 +41,13 @@ func (server *Server) createUser(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		// send JSON response
-		ctx.JSON(http.StatusBadRequest, errorReponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	hashsedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -63,12 +63,12 @@ func (server *Server) createUser(ctx *gin.Context) {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "unique_violation":
-				ctx.JSON(http.StatusForbidden, errorReponse(err))
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
 				return
 			}
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -90,29 +90,29 @@ type loginUserResponse struct {
 func (server *Server) loginUser(ctx *gin.Context) {
 	var req loginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorReponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	user, err := server.store.GetUser(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusBadRequest, errorReponse(err))
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	err = util.CheckPassword(req.Password, user.HashedPassword)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorReponse(err))
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
 	accesstoken, err := server.tokenMaker.CreateToken(user.Username, server.config.AccessTokenDuration)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorReponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 	}
 
 	rsp := loginUserResponse{
