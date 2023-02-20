@@ -59,3 +59,5 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 1. 토큰 인증(paseto) 구현 및 전체 적용 + 테스트 적용
 2. 관련 엔드포인트별 인증 적용 및 테스트 적용
 3. mock, sqlc 재정의.
+
+4. bracnch check test
