@@ -3,17 +3,18 @@
 FROM golang:1.19.2-alpine3.16 AS builder
 # 이미지의 실제작업 디렉토리 설정
 WORKDIR /app
-# 첫번째 . 는 simplebank 하위 모든파일을 루트디렉토리에 복사
-# 두번째 . 는 루트에서 작업디렉토리(/app)로 이동
+# 첫번째 dot = 현재 디렉토리
+# 두번째 dot = /app 디렉토리 
 COPY . .
 # build our app single binary executable file
-RUN go build -o main 
+RUN go build -o main main.go
 
 # step2. run step
 FROM alpine:3.16
 WORKDIR /app
 COPY --from=builder /app/main .
-
+# go build 명령은 .go관련 파일들만 빌드 되기에 그외의 확장자 파일들은 필요에 따라 run 단계에세 복사해주어야함
+COPY app.env .
 
 EXPOSE 8080
 CMD [ "/app/main"]
