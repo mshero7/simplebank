@@ -61,3 +61,8 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 3. mock, sqlc 재정의.
 
 4. bracnch check test
+
+2/21
+1. docker-compose 구성
+2. DB container 구성을 위해 depends_on 활용
+3. db 민감정보 app.env 로 이관
