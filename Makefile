@@ -19,6 +19,12 @@ migrateup1:
 migratedown1:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
 
+migrateup-aws:
+	migrate -path db/migration -database "postgresql://postgres:12341234@simple-bank.cnkwfh9yit7c.ap-northeast-2.rds.amazonaws.com:5432/simple_bank" -verbose up
+
+migratedown-aws:
+	migrate -path db/migration -database "postgresql://postgres:12341234@simple-bank.cnkwfh9yit7c.ap-northeast-2.rds.amazonaws.com:5432/simple_bank" -verbose down
+
 sqlc:
 	docker run --rm -v "%cd%:/src" -w /src kjconroy/sqlc generate
 	
