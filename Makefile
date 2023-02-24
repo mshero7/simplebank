@@ -1,5 +1,5 @@
 postgres:
-	docker run --name postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres
+	docker run --name postgres -p 5432:5432 --network bank-network -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres
 
 createdb:
 	docker exec -it postgres createdb --username=root --owner=root simple_bank
@@ -18,6 +18,12 @@ migrateup1:
 
 migratedown1:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
+
+migrateup-aws:
+	migrate -path db/migration -database "postgresql://postgres:12341234@simple-bank.cnkwfh9yit7c.ap-northeast-2.rds.amazonaws.com:5432/simple_bank" -verbose up
+
+migratedown-aws:
+	migrate -path db/migration -database "postgresql://postgres:12341234@simple-bank.cnkwfh9yit7c.ap-northeast-2.rds.amazonaws.com:5432/simple_bank" -verbose down
 
 sqlc:
 	docker run --rm -v "%cd%:/src" -w /src kjconroy/sqlc generate
