@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-bank-api-deployment
+  labels:
+    app: simple-bank-api
+spec:
+  replicas: 1
+  selector: 
+    matchLabels: # deployment 가 찾는 파드의 이름, 이 이름으로 된 파드들은 해당 deployment 에 의해 관리된다.
+      app: simple-bank-api
+  template:
+    metadata:
+      labels:
+        app: simple-bank-api
+    spec:
+      containers: # 어떤 컨테이너에 배포할지
+      - name: simple-bank-api
+        image: 746572791073.dkr.ecr.ap-northeast-2.amazonaws.com/simplebank:98640d8091706a97cc380a42954870b6e80d379f
+        ports:
+        - containerPort: 8080
