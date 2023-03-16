@@ -39,16 +39,16 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 
 2/7
 1. Custom Validator in go 
-
+```go
     형 변환시, 형변환 값, err 가 나온다.
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("currency", validCurrency)
 	}
-
+```
     Gin 의 기본 밸리데이터는 github.com/go-playground/validator/v10 이라, 새로운 밸리데이터 함수 선언한 뒤, Gin 에 등록해주면 끝
     ex) 
         var validCurrency validator.Func = func(fieldLevel validator.FieldLevel) bool {
-    
+
 2/8
 1. Add users Table
     기존 account 와 동일한 내용들이 있어 그대로 사용해 생성.
@@ -66,3 +66,24 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 1. docker-compose 구성
 2. DB container 구성을 위해 depends_on 활용
 3. db 민감정보 app.env 로 이관
+
+3/16
+1. gRPC createUser, loginUser 구현
+1-1. https://grpc.io/docs/languages/go/quickstart/ >>> Prerequisites
+1-2. 메인객체가 될 User > user.proto
+     User를 사용할 RPC proto 구현
+     RPC를 활용한 Service(gRPC server) 구현
+     pb 폴더 하위에 go 파일 생성
+     gapi 폴더에 Server 객체 구현
+```go
+     // Server serves gRPC requests for out banking services
+    type Server struct {
+        pb.UnimplementedSimpleBankServer // embeding, 구현한 RPC 이용 가능
+        config                           util.Config
+        store                            db.Store    // interact with the database processing API requests from client
+        router                           *gin.Engine // help us send each API request to the correct handler for processing
+        tokenMaker                       token.Maker
+    }
+```
+2. evans cli 활용
+3. https://github.com/ktr0731/evans
