@@ -1,0 +1,18 @@
+syntax = "proto3"; // define proto api version
+
+package pb; // group multiple proto files of the same topic together
+
+import "user.proto";
+
+option go_package = "github.com/mshero7/simplebank/pb";
+
+message CreateUserRequest {
+    string username = 1;
+    string full_name = 2;
+    string email = 3;
+    string passwrod = 4;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}   
