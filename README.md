@@ -68,7 +68,7 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
 3. db 민감정보 app.env 로 이관
 
 3/16
-1. gRPC createUser, loginUser 구현
+1. gRPC Unary API createUser, loginUser 구현
 1-1. https://grpc.io/docs/languages/go/quickstart/ >>> Prerequisites
 1-2. 메인객체가 될 User > user.proto
      User를 사용할 RPC proto 구현
@@ -85,5 +85,4 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
         tokenMaker                       token.Maker
     }
 ```
-2. evans cli 활용
-3. https://github.com/ktr0731/evans
+2. evans cli 활용 - https://github.com/ktr0731/evans
