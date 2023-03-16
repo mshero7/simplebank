@@ -44,6 +44,7 @@ func (server *Server) setupRouter() {
 
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
+	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	// 인증이 필요한 핸들러 그룹핑
 	authRoutest := router.Group("/").Use(authMiddleware(server.tokenMaker))
