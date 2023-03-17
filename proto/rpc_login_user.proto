@@ -9,7 +9,7 @@ option go_package = "github.com/mshero7/simplebank/pb";
 
 message LoginUserRequest {
     string username = 1;
-    string passwrod = 2;
+    string password = 2;
 }
 
 message LoginUserResponse {

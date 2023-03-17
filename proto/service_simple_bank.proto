@@ -4,16 +4,23 @@ package pb; // group multiple proto files of the same topic together
 
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/mshero7/simplebank/pb";
 
 service SimpleBank {
     // gRPC API 
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
-
+        option (google.api.http) = {
+            post: "/v1/create_user"
+            body: "*" // paramters of the request will be sent in the body
+        };
     }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
-
+        option (google.api.http) = {
+            post: "/v1/login_user"
+            body: "*" // paramters of the request will be sent in the body
+        };
     }
 }
 
