@@ -71,6 +71,7 @@ func runGrpcServer(config util.Config, store db.Store) {
 }
 
 func runGatewayServer(config util.Config, store db.Store) {
+	// Create gRPC server
 	server, err := gapi.NewServer(config, store)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
@@ -94,6 +95,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 	// exec before exiting this runGatewayServer func.
 	defer cancel()
 
+	// server 에 grpcMux 핸들러 달아주기 >> server는 덕타이핑 됌
 	err = pb.RegisterSimpleBankHandlerServer(ctx, grpcMux, server)
 	if err != nil {
 		log.Fatal("cannot register handle server:", err)
@@ -102,6 +104,9 @@ func runGatewayServer(config util.Config, store db.Store) {
 	// actually receive HTTP Request from client
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
+
+	fs := http.FileServer(http.Dir("./doc/swagger"))
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs)) // remove  prefix
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {
