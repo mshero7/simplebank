@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "SimplaBank API",
-    "version": "1.0",
+    "version": "1.1",
     "contact": {
       "name": "gRPC-Gateway project",
       "url": "https://github.com/mshero7",
@@ -23,7 +23,8 @@
   "paths": {
     "/v1/create_user": {
       "post": {
-        "summary": "gRPC API",
+        "summary": "Create New User",
+        "description": "Use This API Create User",
         "operationId": "SimpleBank_CreateUser",
         "responses": {
           "200": {
@@ -50,12 +51,18 @@
           }
         ],
         "tags": [
-          "SimpleBank"
-        ]
+          "Simple-bank"
+        ],
+        "externalDocs": {
+          "description": "Find out more Echo",
+          "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+        }
       }
     },
     "/v1/login_user": {
       "post": {
+        "summary": "Login User",
+        "description": "Use This API Login User and Get Access Token \u0026 Refresh Token",
         "operationId": "SimpleBank_LoginUser",
         "responses": {
           "200": {
@@ -82,8 +89,12 @@
           }
         ],
         "tags": [
-          "SimpleBank"
-        ]
+          "Simple-bank"
+        ],
+        "externalDocs": {
+          "description": "Find out more Echo",
+          "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+        }
       }
     }
   },

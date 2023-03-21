@@ -12,7 +12,7 @@ option go_package = "github.com/mshero7/simplebank/pb";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
       title: "SimplaBank API";
-      version: "1.0";
+      version: "1.1";
       contact: {
         name: "gRPC-Gateway project";
         url: "https://github.com/mshero7";
@@ -28,11 +28,29 @@ service SimpleBank {
             post: "/v1/create_user"
             body: "*" // paramters of the request will be sent in the body
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use This API Create User";
+            summary: "Create New User";
+            tags: "Simple-bank";
+            external_docs: {
+              url: "https://github.com/grpc-ecosystem/grpc-gateway";
+              description: "Find out more Echo";
+            }
+        };
     }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
         option (google.api.http) = {
             post: "/v1/login_user"
             body: "*" // paramters of the request will be sent in the body
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use This API Login User and Get Access Token & Refresh Token";
+            summary: "Login User";
+            tags: "Simple-bank";
+            external_docs: {
+              url: "https://github.com/grpc-ecosystem/grpc-gateway";
+              description: "Find out more Echo";
+            }
         };
     }
 }

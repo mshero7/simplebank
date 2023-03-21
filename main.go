@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
+	"embed"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -19,6 +21,9 @@ import (
 
 	_ "github.com/lib/pq"
 )
+
+//go:embed doc/swagger/*
+var content embed.FS
 
 func main() {
 	config, err := util.LoadConfig(".")
@@ -105,8 +110,17 @@ func runGatewayServer(config util.Config, store db.Store) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	fs := http.FileServer(http.Dir("./doc/swagger"))
-	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs)) // remove  prefix
+	// 정적파일 제공 방법
+	// * 디렉토리로 제공하는 방법
+	// fs := http.FileServer(http.Dir("./doc/swagger"))
+	// mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs)) // remove  prefix
+
+	// * 바이너리로 제공하는 방법
+	serverRoot, err := fs.Sub(content, "doc/swagger")
+	if err != nil {
+		log.Fatal(err)
+	}
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.FS(serverRoot))))
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {
