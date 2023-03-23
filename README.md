@@ -86,3 +86,6 @@ prog.go:12:2: no required module provides package github.com/golang/mock/mockgen
     }
 ```
 2. evans cli 활용 - https://github.com/ktr0731/evans
+
+3/23
+grpc validations handle (*)
